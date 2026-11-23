@@ -1,0 +1,11 @@
+# Dependencias directas de la aplicación (Python 3.13).
+# Instalar: python -m pip install -r requirements.txt
+# Mantener las versiones verificadas de las dependencias indirectas.
+-c requirements-lock.txt
+
+# Cálculo vectorizado y operaciones con campos complejos.
+numpy==2.5.5
+# Figuras científicas y exportación PNG, SVG y PDF.
+matplotlib==3.11.2
+# Interfaz web local y pruebas de interacción AppTest.
+streamlit==1.67.0

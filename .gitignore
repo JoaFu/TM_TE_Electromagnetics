@@ -1,0 +1,9 @@
+# Entornos y archivos generados
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+# Datos locales de Streamlit
+.streamlit/secrets.toml
+# Temporales de Office
+~$*.docx
