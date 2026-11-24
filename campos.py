@@ -1,20 +1,6 @@
-
-"""
-campos.py
-
-Cálculo analítico de las seis componentes de los campos
-electromagnéticos en una guía de onda rectangular ideal.
-
-Convención fasorial:
-    exp(j*omega*t - j*beta*z)
-
-Unidades:
-    E: V/m
-    H: A/m
-    x, y, z: m
-
-Las amplitudes E0 y H0 son parámetros de normalización.
-"""
+#-------------------------------------
+# CAMPOS ELECTROMAGNÉTICOS
+#-------------------------------------
 
 from dataclasses import dataclass
 import numpy as np
@@ -32,6 +18,10 @@ class CamposEM:
     Hz: np.ndarray
 
 
+#-------------------------------------
+# CÁLCULO DE CAMPOS
+#-------------------------------------
+
 def calcular_campos(
     p: ParametrosModo,
     x,
@@ -39,18 +29,6 @@ def calcular_campos(
     z=0.0,
     amplitud=1.0,
 ) -> CamposEM:
-    """
-    Calcula los fasores de los campos E y H.
-
-    Parámetros:
-        p: objeto ParametrosModo de modos.py
-        x, y, z: coordenadas espaciales [m].
-                 Admiten escalares o arreglos compatibles.
-        amplitud: E0 para TM [V/m] o H0 para TE [A/m].
-
-    Retorna:
-        CamposEM con las seis componentes complejas.
-    """
     # Validaciones de entrada
     if not isinstance(p, ParametrosModo):
         raise TypeError(
@@ -87,7 +65,6 @@ def calcular_campos(
     sy = np.sin(p.ky * y)
     cy = np.cos(p.ky * y)
 
-    # Inicializar las seis componentes complejas
     Ex = np.zeros(x.shape, dtype=complex)
     Ey = np.zeros(x.shape, dtype=complex)
     Ez = np.zeros(x.shape, dtype=complex)
@@ -142,13 +119,6 @@ def calcular_campos(
 
 
 def campo_instantaneo(componente, frecuencia, tiempo):
-    """
-    Convierte un fasor a su valor físico instantáneo.
-
-    componente: arreglo complejo
-    frecuencia: Hz
-    tiempo: segundos
-    """
     omega = 2 * np.pi * frecuencia
 
     return np.real(
@@ -157,9 +127,6 @@ def campo_instantaneo(componente, frecuencia, tiempo):
 
 
 def magnitud_campo(c1, c2, c3):
-    """
-    Calcula la magnitud vectorial de un campo fasorial.
-    """
     return np.sqrt(
         np.abs(c1)**2 +
         np.abs(c2)**2 +

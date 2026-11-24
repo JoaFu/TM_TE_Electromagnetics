@@ -1,9 +1,6 @@
-"""Interfaz Streamlit para la simulación de modos TE y TM.
-
-La aplicación es deliberadamente una capa de presentación: todos los
-cálculos electromagnéticos y las figuras se delegan a los módulos del
-proyecto (`modos`, `campos`, `validacion` y `graficas`).
-"""
+#-------------------------------------
+# INTERFAZ STREAMLIT
+#-------------------------------------
 
 from io import BytesIO
 from math import isfinite
@@ -29,10 +26,10 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+# Estilos de presentación
 st.markdown(
     """
     <style>
-    /* Tipografía local: no requiere descargar fuentes externas. */
     html, body, .stApp, input, textarea, button,
     [data-testid="stMarkdownContainer"], [data-testid="stWidgetLabel"],
     [data-testid="stMetric"], [data-baseweb="select"],
@@ -115,8 +112,11 @@ st.markdown(
 )
 
 
+#-------------------------------------
+# FUNCIONES AUXILIARES
+#-------------------------------------
+
 def _formatear_frecuencia(valor: float) -> str:
-    """Devuelve una frecuencia en una unidad cómoda para lectura."""
     if valor >= 1e9:
         return f"{valor / 1e9:.5g} GHz"
     if valor >= 1e6:
@@ -131,14 +131,12 @@ def _formatear_beta(beta: complex) -> str:
 
 
 def _figura_bytes(fig, extension: str) -> bytes:
-    """Serializa una figura Matplotlib para el botón de descarga."""
     buffer = BytesIO()
     fig.savefig(buffer, format=extension, dpi=300, bbox_inches="tight")
     return buffer.getvalue()
 
 
 def _mostrar_parametros(p) -> None:
-    """Presenta los parámetros calculados sin repetir la matemática."""
     columnas = st.columns(4)
     columnas[0].metric("Modo", f"{p.modo}({p.m}, {p.n})")
     columnas[1].metric("Estado", p.estado)
@@ -159,6 +157,10 @@ def _mostrar_parametros(p) -> None:
         }
         st.table(datos)
 
+
+#-------------------------------------
+# APLICACIÓN PRINCIPAL
+#-------------------------------------
 
 def main() -> None:
     st.markdown(
@@ -302,6 +304,9 @@ def main() -> None:
         plt.close(fig)
 
     st.divider()
+    #-------------------------------------
+    # VERIFICACIÓN FÍSICA
+    #-------------------------------------
     st.subheader("Verificación física")
     with st.form("verificacion"):
         st.caption("Evalúa las ecuaciones en un punto interior y el campo eléctrico tangencial sobre las paredes PEC.")

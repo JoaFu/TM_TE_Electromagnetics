@@ -1,13 +1,7 @@
 
-"""
-validacion.py
-
-Verificación numérica de las ecuaciones de Maxwell
-y condiciones de frontera para modos TE y TM.
-
-Las derivadas se aproximan mediante diferencias
-finitas centrales de segundo orden.
-"""
+#-------------------------------------
+# VALIDACIÓN DE MAXWELL
+#-------------------------------------
 
 from dataclasses import dataclass
 import numpy as np
@@ -25,9 +19,11 @@ class ResultadoValidacion:
     error_fronteras: float
 
 
-def derivada(p, x, y, z, componente, eje, h):
-    """Calcula una derivada parcial por diferencias centrales."""
+#-------------------------------------
+# DERIVADAS NUMÉRICAS
+#-------------------------------------
 
+def derivada(p, x, y, z, componente, eje, h):
     coordenadas_positivas = [x, y, z]
     coordenadas_negativas = [x, y, z]
 
@@ -48,6 +44,10 @@ def derivada(p, x, y, z, componente, eje, h):
     ) / (2 * h)
 
 
+#-------------------------------------
+# ECUACIONES DE MAXWELL
+#-------------------------------------
+
 def validar_maxwell(
     p: ParametrosModo,
     x: float,
@@ -55,11 +55,6 @@ def validar_maxwell(
     z: float = 0.0,
     h: float = 1e-6,
 ) -> ResultadoValidacion:
-    """
-    Evalúa los residuos normalizados de Maxwell
-    en un punto interior de la guía.
-    """
-
     if not (0 < x < p.a and 0 < y < p.b):
         raise ValueError(
             "El punto debe estar dentro de la guía."
@@ -175,14 +170,11 @@ def validar_maxwell(
     )
 
 
+#-------------------------------------
+# CONDICIONES DE FRONTERA
+#-------------------------------------
+
 def validar_fronteras(p: ParametrosModo, puntos=100):
-    """
-    Comprueba las componentes tangenciales de E
-    en las cuatro paredes PEC de la guía.
-
-    Devuelve el máximo error absoluto.
-    """
-
     x = np.linspace(0, p.a, puntos)
     y = np.linspace(0, p.b, puntos)
 

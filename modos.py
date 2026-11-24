@@ -1,18 +1,7 @@
 
-"""
-modos.py
-
-Validación modal y cálculo de parámetros electromagnéticos
-para guías de onda rectangulares ideales.
-
-Convención fasorial:
-    exp(j*omega*t - j*beta*z)
-
-Para modos evanescentes:
-    beta = -1j*alpha
-
-Unidades: Sistema Internacional (SI).
-"""
+#-------------------------------------
+# MODOS
+#-------------------------------------
 
 from dataclasses import dataclass
 from math import pi, sqrt, hypot, isfinite
@@ -22,6 +11,10 @@ from numbers import Integral
 EPSILON_0 = 8.8541878128e-12  # F/m
 MU_0 = 1.25663706212e-6       # H/m
 
+
+#-------------------------------------
+# MODELO DE DATOS
+#-------------------------------------
 
 @dataclass(frozen=True)
 class ParametrosModo:
@@ -47,9 +40,11 @@ class ParametrosModo:
     estado: str
 
 
-def validar_modo(modo: str, m: int, n: int) -> None:
-    """Valida el tipo de modo y sus índices."""
+#-------------------------------------
+# VALIDACIÓN MODAL
+#-------------------------------------
 
+def validar_modo(modo: str, m: int, n: int) -> None:
     if not isinstance(modo, str):
         raise ValueError("El modo debe ser TE o TM.")
 
@@ -57,8 +52,7 @@ def validar_modo(modo: str, m: int, n: int) -> None:
 
     if modo not in ("TE", "TM"):
         raise ValueError("El modo debe ser TE o TM.")
-    #***********************************************************************************
-    #Protección contra valores no enteros o booleanos, y contra valores negativos
+    # Los índices deben ser enteros no negativos.
     if (
         isinstance(m, bool)
         or isinstance(n, bool)
@@ -77,8 +71,11 @@ def validar_modo(modo: str, m: int, n: int) -> None:
         raise ValueError(
             "Los modos TM requieren m >= 1 y n >= 1."
         )
-    #***********************************************************************************
 
+
+#-------------------------------------
+# CÁLCULO DE PARÁMETROS
+#-------------------------------------
 
 def calcular_parametros(
     modo: str,
@@ -90,21 +87,9 @@ def calcular_parametros(
     epsilon_r: float = 1.0,
     mu_r: float = 1.0,
 ) -> ParametrosModo:
-    """
-    Calcula los parámetros de un modo TE o TM.
-
-    Parámetros:
-        modo: 'TE' o 'TM'
-        m, n: índices modales
-        a, b: dimensiones de la guía [m]
-        frecuencia: frecuencia de operación [Hz]
-        epsilon_r: permitividad relativa
-        mu_r: permeabilidad relativa
-    """
-
     validar_modo(modo, m, n)
     modo = modo.upper().strip()
-    # Diccionario para validar y convertir los valores a float
+    # Validación y conversión de entradas numéricas
     valores = {
         "a": a,
         "b": b,
@@ -112,7 +97,6 @@ def calcular_parametros(
         "epsilon_r": epsilon_r,
         "mu_r": mu_r,
     }
-    # Validar que los parámetros sean numéricos, finitos y positivos.
     for nombre, valor in valores.items():
         try:
             numero = float(valor)
@@ -127,14 +111,12 @@ def calcular_parametros(
             )
 
         valores[nombre] = numero
-    # Recuperar los parámetros físicos ya validados y convertidos a float.
     a = valores["a"]
     b = valores["b"]
     frecuencia = valores["frecuencia"]
     epsilon_r = valores["epsilon_r"]
     mu_r = valores["mu_r"]
 
-    # Constantes y parámetros electromagnéticos calculados
     epsilon = EPSILON_0 * epsilon_r
     mu = MU_0 * mu_r
 

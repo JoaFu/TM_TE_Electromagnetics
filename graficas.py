@@ -1,18 +1,7 @@
 
-"""
-graficas.py
-
-Visualización de campos electromagnéticos TE y TM
-en guías de onda rectangulares ideales.
-
-Utiliza los fasores calculados en campos.py.
-
-Convención fasorial:
-    exp(j*omega*t - j*beta*z)
-
-La fase temporal se expresa en radianes.
-Las coordenadas espaciales se expresan en metros.
-"""
+#-------------------------------------
+# GRÁFICAS DE CAMPOS
+#-------------------------------------
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -21,13 +10,11 @@ from modos import ParametrosModo
 from campos import calcular_campos, magnitud_campo
 
 
-# ============================================================
-# 1. FUNCIONES AUXILIARES
-# ============================================================
+#-------------------------------------
+# FUNCIONES AUXILIARES
+#-------------------------------------
 
 def fase_grados(grados):
-    """Convierte una fase temporal de grados a radianes."""
-
     if not np.isfinite(grados):
         raise ValueError("La fase debe ser finita.")
 
@@ -35,8 +22,6 @@ def fase_grados(grados):
 
 
 def crear_malla(p: ParametrosModo, nx=101, ny=81):
-    """Construye una malla transversal de la guía."""
-
     if not isinstance(p, ParametrosModo):
         raise TypeError("p debe ser un objeto ParametrosModo.")
 
@@ -59,12 +44,6 @@ def crear_malla(p: ParametrosModo, nx=101, ny=81):
 
 
 def obtener_componentes(p, X, Y, z=0.0, fase=0.0):
-    """
-    Calcula los campos eléctricos y magnéticos instantáneos.
-
-    fase = omega*t, expresada en radianes.
-    """
-
     if not np.isfinite(fase):
         raise ValueError("La fase debe ser finita.")
 
@@ -86,8 +65,6 @@ def obtener_componentes(p, X, Y, z=0.0, fase=0.0):
 
 
 def obtener_vector(E, H, campo):
-    """Selecciona las componentes del campo E o H."""
-
     if not isinstance(campo, str):
         raise ValueError("El campo debe ser E o H.")
 
@@ -103,8 +80,6 @@ def obtener_vector(E, H, campo):
 
 
 def validar_resolucion(n, nombre):
-    """Comprueba la resolución de una malla."""
-
     if (
         not isinstance(n, (int, np.integer))
         or isinstance(n, (bool, np.bool_))
@@ -116,8 +91,6 @@ def validar_resolucion(n, nombre):
 
 
 def mostrar_campo_nulo(ax, mensaje):
-    """Muestra un aviso cuando el campo proyectado es nulo."""
-
     ax.text(
         0.5,
         0.5,
@@ -128,9 +101,9 @@ def mostrar_campo_nulo(ax, mensaje):
     )
 
 
-# ============================================================
-# 2. LÍNEAS DE CAMPO TRANSVERSALES
-# ============================================================
+#-------------------------------------
+# LÍNEAS DE CAMPO TRANSVERSALES
+#-------------------------------------
 
 def graficar_lineas(
     p: ParametrosModo,
@@ -140,11 +113,6 @@ def graficar_lineas(
     nx=101,
     ny=81,
 ):
-    """
-    Grafica las líneas del campo transversal
-    en el plano xy, a una posición z fija.
-    """
-
     X, Y = crear_malla(p, nx, ny)
 
     E, H = obtener_componentes(
@@ -196,9 +164,9 @@ def graficar_lineas(
     return fig
 
 
-# ============================================================
-# 3. VECTORES DE CAMPO TRANSVERSALES
-# ============================================================
+#-------------------------------------
+# VECTORES DE CAMPO TRANSVERSALES
+#-------------------------------------
 
 def graficar_vectores(
     p: ParametrosModo,
@@ -208,11 +176,6 @@ def graficar_vectores(
     nx=21,
     ny=15,
 ):
-    """
-    Representa las componentes transversales
-    mediante flechas en el plano xy.
-    """
-
     X, Y = crear_malla(p, nx, ny)
 
     E, H = obtener_componentes(
@@ -265,9 +228,9 @@ def graficar_vectores(
     return fig
 
 
-# ============================================================
-# 4. MAPAS DE MAGNITUD FASORIAL
-# ============================================================
+#-------------------------------------
+# MAPAS DE MAGNITUD FASORIAL
+#-------------------------------------
 
 def graficar_magnitud(
     p: ParametrosModo,
@@ -276,13 +239,6 @@ def graficar_magnitud(
     nx=101,
     ny=81,
 ):
-    """
-    Representa la magnitud del fasor vectorial
-    completo en una sección transversal.
-
-    Esta representación no depende de la fase temporal.
-    """
-
     X, Y = crear_malla(p, nx, ny)
 
     c = calcular_campos(p, X, Y, z=z)
@@ -350,9 +306,9 @@ def graficar_magnitud(
     return fig
 
 
-# ============================================================
-# 5. CORTES LONGITUDINALES
-# ============================================================
+#-------------------------------------
+# CORTES LONGITUDINALES
+#-------------------------------------
 
 def graficar_longitudinal(
     p: ParametrosModo,
@@ -365,27 +321,7 @@ def graficar_longitudinal(
     n_transversal=101,
     nz=151,
 ):
-    """
-    Visualiza un corte longitudinal del campo E o H.
-
-    plano:
-        'xz' -> y = posicion
-        'yz' -> x = posicion
-
-    representacion:
-        'lineas' -> streamplot
-        'vectores' -> quiver
-
-    fase:
-        Fase temporal omega*t en radianes.
-
-    Las gráficas representan la proyección
-    del campo sobre el plano seleccionado.
-    """
-
-    # --------------------------------------------------------
     # Validación de parámetros
-    # --------------------------------------------------------
 
     if not np.isfinite(longitud) or longitud <= 0:
         raise ValueError(
@@ -413,9 +349,7 @@ def graficar_longitudinal(
             "La representación debe ser lineas o vectores."
         )
 
-    # --------------------------------------------------------
     # Construcción del corte espacial
-    # --------------------------------------------------------
 
     z = np.linspace(0, longitud, nz)
 
@@ -467,10 +401,6 @@ def graficar_longitudinal(
         etiqueta = "y (m)"
         limite = p.b
 
-    # --------------------------------------------------------
-    # Cálculo de los campos instantáneos
-    # --------------------------------------------------------
-
     E, H = obtener_componentes(
         p, X, Y, z=Z, fase=fase
     )
@@ -485,10 +415,6 @@ def graficar_longitudinal(
     maximo = float(np.max(magnitud))
 
     fig, ax = plt.subplots(figsize=(10, 5))
-
-    # --------------------------------------------------------
-    # Representación gráfica
-    # --------------------------------------------------------
 
     if maximo > 1e-12:
 
@@ -539,10 +465,6 @@ def graficar_longitudinal(
             ax,
             "Campo proyectado nulo en este plano y fase",
         )
-
-    # --------------------------------------------------------
-    # Formato de la figura
-    # --------------------------------------------------------
 
     ax.set(
         xlabel=etiqueta,
